@@ -10,6 +10,9 @@ func Routes() *gin.Engine {
 	repository := &repositories.StudentRepository{}
 	studentHandler := NewStudentHandler(repository)
 	router.GET("/students", studentHandler.listStudentsHandler)
+	router.GET("/students/:id", studentHandler.getStudentByIDHandler)
 	router.POST("/students", studentHandler.createStudentHandler)
+	router.DELETE("/students/:id", studentHandler.deleteStudentHandler)
+	router.PUT("/students/:id", studentHandler.updateStudentHandler)
 	return router
 }
