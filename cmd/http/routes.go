@@ -14,5 +14,6 @@ func Routes() *gin.Engine {
 	router.POST("/students", studentHandler.createStudentHandler)
 	router.DELETE("/students/:id", studentHandler.deleteStudentHandler)
 	router.PUT("/students/:id", studentHandler.updateStudentHandler)
+	router.GET("/students/cpf/:cpf", studentHandler.findStudentByCPFHandler)
 	return router
 }

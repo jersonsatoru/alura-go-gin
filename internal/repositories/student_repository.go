@@ -18,6 +18,7 @@ type IStudentRepository interface {
 	FindByID(int64) (*entities.Student, error)
 	Delete(int64) error
 	Update(*entities.Student) (*entities.Student, error)
+	FindByCPF(cpf string) (*entities.Student, error)
 }
 
 func (s *StudentRepository) Create(student *entities.Student) (*entities.Student, error) {
@@ -105,4 +106,23 @@ func (s StudentRepository) Update(student *entities.Student) (*entities.Student,
 		return nil, err
 	}
 	return student, nil
+}
+
+func (s *StudentRepository) FindByCPF(cpf string) (*entities.Student, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+	query := map[string]interface{}{
+		"cpf": cpf,
+	}
+	var studentORM orm.Student
+	tx := db.DB.WithContext(ctx).Where(query).First(&studentORM)
+	if err := tx.Error; err != nil {
+		return nil, err
+	}
+	return &entities.Student{
+		ID:   int64(studentORM.ID),
+		Name: studentORM.Name,
+		CPF:  studentORM.CPF,
+		RG:   studentORM.RG,
+	}, nil
 }

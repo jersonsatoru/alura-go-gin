@@ -157,3 +157,22 @@ func (s StudentHandler) updateStudentHandler(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, updatedStudent)
 }
+
+func (s *StudentHandler) findStudentByCPFHandler(c *gin.Context) {
+	cpf := c.Params.ByName("cpf")
+	student, err := s.studentRepository.FindByCPF(cpf)
+	if err != nil {
+		switch {
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			c.JSON(http.StatusNotFound, gin.H{
+				"error": fmt.Sprintf("student with cpf %s not found", cpf),
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, student)
+}
