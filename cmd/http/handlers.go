@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jersonsatoru/alura-go-gin/internal/entities"
+	"github.com/jersonsatoru/alura-go-gin/internal/domain/entities"
 	"github.com/jersonsatoru/alura-go-gin/internal/repositories"
 	"gorm.io/gorm"
 )
@@ -47,11 +47,19 @@ func (sh *StudentHandler) createStudentHandler(c *gin.Context) {
 		})
 		return
 	}
-	recentlyCreatedStudent, err := sh.studentRepository.Create(&entities.Student{
+	student := &entities.Student{
 		Name: input.Name,
 		CPF:  input.CPF,
 		RG:   input.RG,
-	})
+	}
+	err := entities.ValidateStudent(student)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	recentlyCreatedStudent, err := sh.studentRepository.Create(student)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -148,6 +156,13 @@ func (s StudentHandler) updateStudentHandler(c *gin.Context) {
 	student.Name = input.Name
 	student.CPF = input.CPF
 	student.RG = input.RG
+	err = entities.ValidateStudent(student)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 	updatedStudent, err := s.studentRepository.Update(student)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

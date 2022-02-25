@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/jersonsatoru/alura-go-gin/internal/db"
-	"github.com/jersonsatoru/alura-go-gin/internal/entities"
+	"github.com/jersonsatoru/alura-go-gin/internal/domain/entities"
 	"github.com/jersonsatoru/alura-go-gin/internal/orm"
 	"gorm.io/gorm"
 )
